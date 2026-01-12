@@ -1,13 +1,13 @@
 """
 SAC Training Script for OT-2 Controller
-Using Soft Actor-Critic for better sample efficiency
+Memory-optimized with small replay buffer
 """
 
 from clearml import Task
 
 task = Task.init(
     project_name='OT2-RL-Control/Jens',
-    task_name='OT2-SAC-2M-improved-reward'
+    task_name='OT2-SAC-2M-optimized'
 )
 
 task.set_packages(['numpy==1.26.4', 'clearml', 'tensorboard'])
@@ -27,9 +27,9 @@ CONFIG = {
     "policy_type": "MlpPolicy",
     "total_timesteps": 2_000_000,
     "learning_rate": 3e-4,
-    "buffer_size": 100_000,
-    "learning_starts": 10_000,
-    "batch_size": 256,
+    "buffer_size": 10_000,
+    "learning_starts": 5_000,
+    "batch_size": 64,
     "tau": 0.005,
     "gamma": 0.99,
     "train_freq": 1,
@@ -68,9 +68,8 @@ print("="*60)
 print("STARTING SAC TRAINING")
 print(f"Algorithm: {CONFIG['algorithm']}")
 print(f"Total timesteps: {CONFIG['total_timesteps']:,}")
-print(f"Learning rate: {CONFIG['learning_rate']}")
-print(f"Batch size: {CONFIG['batch_size']}")
 print(f"Buffer size: {CONFIG['buffer_size']:,}")
+print(f"Batch size: {CONFIG['batch_size']}")
 print("="*60)
 
 model.learn(
