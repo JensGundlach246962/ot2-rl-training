@@ -67,7 +67,7 @@ print("="*60)
 
 model.learn(
     total_timesteps=CONFIG["total_timesteps"],
-    callback=[checkpoint_callback],
+    callback=[],
     progress_bar=True
 )
 
