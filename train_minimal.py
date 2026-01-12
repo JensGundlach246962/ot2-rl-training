@@ -6,7 +6,7 @@ task = Task.init(
     task_name='PPO-minimal-rewrite'
 )
 
-task.set_packages(['numpy==1.26.4'])
+task.set_packages(['numpy==1.26.4', 'clearml'])
 task.set_base_docker('deanis/2023y2b-rl:latest')
 task.execute_remotely(queue_name="default", exit_process=True)
 
