@@ -2,7 +2,7 @@ from clearml import Task
 
 task = Task.init(
     project_name='OT2-RL-Control/Jens',
-    task_name='OT2-PPO-3M-improved-reward'
+    task_name='OT2-PPO-no-logging-test'
 )
 
 task.set_packages(['numpy==1.26.4', 'clearml', 'tensorboard'])
@@ -14,13 +14,12 @@ print(f"NumPy version: {np.__version__}")
 
 from ot2_gym_wrapper import OT2GymEnv
 from stable_baselines3 import PPO
-from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.vec_env import DummyVecEnv
 
 CONFIG = {
     "algorithm": "PPO",
     "policy_type": "MlpPolicy",
-    "total_timesteps": 3_000_000,
+    "total_timesteps": 100_000,  # Just 100k for testing
     "learning_rate": 1e-3,
     "n_steps": 2048,
     "batch_size": 128,
@@ -38,12 +37,6 @@ def make_env():
 
 env = DummyVecEnv([make_env])
 
-checkpoint_callback = CheckpointCallback(
-    save_freq=50_000,
-    save_path="./checkpoints/",
-    name_prefix="ot2_ppo"
-)
-
 model = PPO(
     CONFIG["policy_type"],
     env,
@@ -55,24 +48,18 @@ model = PPO(
     gae_lambda=CONFIG["gae_lambda"],
     clip_range=CONFIG["clip_range"],
     ent_coef=CONFIG["ent_coef"],
-    verbose=1,
-    tensorboard_log="./tensorboard_logs/",
+    verbose=0,  # Disable verbose output
 )
 
 print("="*60)
-print("STARTING PPO TRAINING")
+print("STARTING PPO TRAINING - MINIMAL CONFIG")
 print(f"Total timesteps: {CONFIG['total_timesteps']:,}")
-print(f"Learning rate: {CONFIG['learning_rate']}")
 print("="*60)
 
 model.learn(
     total_timesteps=CONFIG["total_timesteps"],
-    callback=[],
-    progress_bar=True
+    progress_bar=False  # Disable progress bar
 )
 
-model.save("ot2_ppo_final")
-task.upload_artifact("final_model", artifact_object="ot2_ppo_final.zip")
 print("Training complete!")
-
 env.close()
