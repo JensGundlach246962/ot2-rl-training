@@ -8,7 +8,7 @@ from gymnasium import spaces
 import numpy as np
 import sys
 sys.path.append('..')
-from sim_class import Simulation
+from sim_class_jens import Simulation
 
 
 class OT2GymEnv(gym.Env):
